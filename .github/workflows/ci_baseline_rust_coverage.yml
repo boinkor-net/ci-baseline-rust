@@ -26,7 +26,7 @@ jobs:
         env:
           CARGO_INCREMENTAL: "0"
           RUSTFLAGS: "-C instrument-coverage"
-          RUSTDOCFLAGS: "-Cpanic=abort -Cinstrument-coverage -Zunstable-options --persist-doctests ../target/debug/doctestbins"
+          RUSTDOCFLAGS: "-Cpanic=abort -Cinstrument-coverage -Zunstable-options --persist-doctests ${{github.workspace}}/target/debug/doctestbins"
           LLVM_PROFILE_FILE: "profile-%p-%m.profraw"
 
       - name: Run grcov to merge coverage data
