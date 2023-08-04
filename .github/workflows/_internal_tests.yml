@@ -9,6 +9,7 @@ on:
 jobs:
   success_tests:
     strategy:
+      fail-fast: false
       matrix:
         rust_toolchain: ["stable", "nightly"]
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
@@ -17,16 +18,14 @@ jobs:
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
   negative_success_tests:
-    strategy:
-      matrix:
-        rust_toolchain: ["stable", "nightly"]
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
     with:
       cargo_test_args: "--manifest-path tests/failure/Cargo.toml"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
+      rust_toolchain: stable
 
   failure_tests:
     strategy:
+      fail-fast: false
       matrix:
         rust_toolchain: ["stable", "nightly"]
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
