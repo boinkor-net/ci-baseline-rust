@@ -32,8 +32,10 @@ jobs:
       - failure_tests
     steps:
       - name: transform the outcomes
+        id: outcomes
         run: >
-          echo '${{toJSON(needs)}}'
+          any_success="$(echo '${{toJSON(needs)}}' | jq '. | to_entries | map(.value.outputs._internal_test_result) | contains(["success"])')"
+          echo "any_success=$any_success" >>"$GITHUB_OUTPUT"
       - name: failure
         run: false
-        if: needs.failure_tests.outputs._internal_test_result == 'success'
+        if: steps.outcomes.outputs.any_success == true
