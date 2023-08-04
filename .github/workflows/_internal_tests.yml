@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: transform the outcomes
         run: >
-          echo '${{needs}}'
+          echo '${{toJSON(needs)}}'
       - name: failure
         run: false
         if: needs.failure_tests.outputs._internal_test_result == 'success'
