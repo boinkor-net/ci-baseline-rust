@@ -1,10 +1,6 @@
 name: "Tests for this repo"
 on:
   workflow_call:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
 
 jobs:
   success_tests:
