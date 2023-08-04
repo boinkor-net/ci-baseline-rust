@@ -1,0 +1,24 @@
+name: "CI/Rust - tests"
+on:
+  workflow_call:
+    inputs:
+      rust_toolchain:
+        description: "Rust toolchain to use for testing"
+        type: string
+        default: "stable"
+      cargo_test_args:
+        description: "Arguments to pass to `cargo test` in the test step"
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{inputs.rust_toolchain}}
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+      - run: "cargo +${{inputs.rust_toolchain}} nextest run ${{inputs.cargo_test_args}}"
