@@ -54,11 +54,11 @@ jobs:
         env:
           NEEDS_JSON: ${{toJSON(needs)}}
         run: >
-          echo "any_success=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
+          echo "all_failure=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
       - name: debug
         env:
           OUTCOMES: ${{toJSON(steps.outcomes)}}
         run: echo $OUTCOMES
       - name: failure
         run: exit 1
-        if: steps.outcomes.outputs.any_success == 'false'
+        if: steps.outcomes.outputs.all_failure != 'true'
