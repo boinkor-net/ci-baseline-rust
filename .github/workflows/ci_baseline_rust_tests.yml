@@ -2,6 +2,10 @@ name: "CI/Rust - tests"
 on:
   workflow_call:
     inputs:
+      manifest_dir:
+        description: "Directory containing the Cargo.toml of the codebase under test"
+        type: string
+        default: "."
       rust_toolchain:
         description: "Rust toolchain to use for testing"
         type: string
@@ -16,9 +20,12 @@ on:
         type: boolean
 
     outputs:
-      _internal_test_result:
+      _internal_tests_result:
         description: "Result of the test job"
         value: ${{ jobs.test.outputs.result }}
+
+env:
+  CARGO_MANIFEST_DIR: ${{inputs.manifest_dir}}
 
 jobs:
   test:

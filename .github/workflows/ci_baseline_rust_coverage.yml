@@ -2,12 +2,19 @@ name: "Code coverage"
 on:
   workflow_call:
     inputs:
+      manifest_dir:
+        description: "Directory containing the Cargo.toml of the codebase under test"
+        type: string
+        default: "."
       cargo_test_args:
         description: "Commandline passed to `cargo test`"
         type: string
     secrets:
       CODECOV_TOKEN:
         description: "Identification token for the upload to codecov.io"
+
+env:
+  CARGO_MANIFEST_DIR: ${{inputs.manifest_dir}}
 
 jobs:
   code_coverage:
