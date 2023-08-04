@@ -64,6 +64,7 @@ jobs:
       - uses: giraffate/clippy-action@v1
         id: clippy
         with:
+          workdir: ${{inputs.manifest_dir}}
           reporter: "github-pr-review"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           clippy_flags: ${{inputs.cargo_clippy_args}}
