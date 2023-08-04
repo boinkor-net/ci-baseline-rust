@@ -34,15 +34,14 @@ jobs:
     steps:
       - name: transform the outcomes
         id: outcomes
+        env:
+          NEEDS_JSON: ${{toJSON(needs)}}
         run: >
-          any_success="$(echo '${{toJSON(needs)}}' | jq '. | to_entries | map(.value.outputs._internal_test_result) | contains(["success"])')";
-          echo "any_success=$any_success" >>"$GITHUB_OUTPUT"
+          echo "any_success=$(echo "$NEEDS_JSON" | jq '. | to_entries | map(.value.outputs._internal_test_result) | contains(["success"])')" >>$GITHUB_OUTPUT
       - name: debug
-        run: echo any success=${{steps.outcomes.outputs.any_success}}
-      - name: debug2
         env:
           OUTCOMES: ${{toJSON(steps.outcomes)}}
         run: echo $OUTCOMES
       - name: failure
-        run: false
+        run: exit 1
         if: steps.outcomes.outputs.any_success == 'true'
