@@ -39,6 +39,8 @@ jobs:
           echo "any_success=$any_success" >>"$GITHUB_OUTPUT"
       - name: debug
         run: echo any success=${{steps.outcomes.outputs.any_success}}
+      - name: debug2
+        run: echo ${{toJSON(steps.outcomes)}}
       - name: failure
         run: false
         if: steps.outcomes.outputs.any_success == 'true'
