@@ -40,7 +40,9 @@ jobs:
       - name: debug
         run: echo any success=${{steps.outcomes.outputs.any_success}}
       - name: debug2
-        run: echo ${{toJSON(steps.outcomes)}}
+        env:
+          OUTCOMES: ${{toJSON(steps.outcomes)}}
+        run: echo $OUTCOMES
       - name: failure
         run: false
         if: steps.outcomes.outputs.any_success == 'true'
