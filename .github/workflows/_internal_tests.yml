@@ -11,7 +11,18 @@ jobs:
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
     secrets: inherit
     with:
-      cargo_test_args: "--manifest-path tests/success/Cargo.toml"
+      manifest_dir: "tests/success"
+      rust_toolchain: ${{ matrix.rust_toolchain }}
+
+  success_lints:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    secrets: inherit
+    with:
+      manifest_dir: "tests/success"
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
   # Test jobs that expect failure; note that these need to be named
@@ -54,11 +65,11 @@ jobs:
         env:
           NEEDS_JSON: ${{toJSON(needs)}}
         run: >
-          echo "any_success=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
+          echo "all_failure=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
       - name: debug
         env:
           OUTCOMES: ${{toJSON(steps.outcomes)}}
         run: echo $OUTCOMES
       - name: failure
         run: exit 1
-        if: steps.outcomes.outputs.any_success == 'false'
+        if: steps.outcomes.outputs.all_failure != 'true'
