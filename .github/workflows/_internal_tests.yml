@@ -31,6 +31,9 @@ jobs:
     needs:
       - failure_tests
     steps:
+      - name: transform the outcomes
+        run: >
+          echo '${{needs}}'
       - name: failure
         run: false
         if: needs.failure_tests.outputs._internal_test_result == 'success'
