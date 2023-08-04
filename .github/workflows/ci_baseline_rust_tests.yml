@@ -12,7 +12,7 @@ on:
 
       # Used for testing this repo:
       _internal_continue_on_error:
-        description: "Whether to set continue-on-error on the job"
+        description: "Whether to set continue-on-error on the job; set this to true only in the tests _inside this repo_. Otherwise your workflow run will pass when it shouldn't."
         type: boolean
 
     outputs:
