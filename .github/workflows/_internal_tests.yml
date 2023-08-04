@@ -36,6 +36,8 @@ jobs:
         run: >
           any_success="$(echo '${{toJSON(needs)}}' | jq '. | to_entries | map(.value.outputs._internal_test_result) | contains(["success"])')"
           echo "any_success=$any_success" >>"$GITHUB_OUTPUT"
+      - name: debug
+        run: echo any success=${{steps.outcomes.outputs.any_success}}
       - name: failure
         run: false
         if: steps.outcomes.outputs.any_success == true
