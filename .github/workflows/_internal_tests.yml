@@ -24,10 +24,24 @@ jobs:
       rust_toolchain: ${{ matrix.rust_toolchain }}
       _internal_continue_on_error: true
 
+  failure_fmt:
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    with:
+      manifest_dir: "tests/fmt-failure"
+      _internal_continue_on_error: true
+
+  failure_lints:
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    with:
+      manifest_dir: "tests/lint-failure"
+      _internal_continue_on_error: true
+
   all_failure_tests:
     runs-on: ubuntu-latest
     needs:
       - failure_tests
+      - failure_fmt
+      - failure_lints
     steps:
       - name: transform the outcomes
         id: outcomes
