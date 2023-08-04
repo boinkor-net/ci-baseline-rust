@@ -65,6 +65,7 @@ jobs:
         with:
           workdir: ${{inputs.manifest_dir}}
           reporter: "github-check"
+          filter_mode: nofilter
           github_token: ${{ secrets.GITHUB_TOKEN }}
           clippy_flags: ${{inputs.cargo_clippy_args}}
 
