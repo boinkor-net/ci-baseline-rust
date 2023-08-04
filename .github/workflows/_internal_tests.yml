@@ -33,4 +33,4 @@ jobs:
     steps:
       - name: failure
         run: false
-        if: needs.failure_tests.outputs._internal_test_result == "success"
+        if: needs.failure_tests.outputs._internal_test_result == 'success'
