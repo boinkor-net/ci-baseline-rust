@@ -20,7 +20,7 @@ on:
         type: boolean
 
     outputs:
-      _internal_test_result:
+      _internal_tests_result:
         description: "Result of the test job"
         value: ${{ jobs.test.outputs.result }}
 
