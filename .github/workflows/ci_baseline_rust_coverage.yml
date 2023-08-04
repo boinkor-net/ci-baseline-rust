@@ -6,7 +6,7 @@ on:
         description: "Commandline passed to `cargo test`"
         type: string
     secrets:
-      codecov_token:
+      CODECOV_TOKEN:
         description: "Identification token for the upload to codecov.io"
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3.1.4
         with:
-          token: ${{ secrets.codecov_token }}
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/*.lcov
 
       - name: Archive code coverage results

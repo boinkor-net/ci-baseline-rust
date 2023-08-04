@@ -51,7 +51,7 @@ This workflow runs tests (unit, integration and doctests) and gathers all their 
 
 It requires secrets:
 
-* `codecov_token` - the token issued by codecov.io for your repo
+* `CODECOV_TOKEN` - the token issued by codecov.io for your repo
 
 And comes with customization options:
 
