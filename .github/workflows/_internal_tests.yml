@@ -40,4 +40,4 @@ jobs:
         run: echo any success=${{steps.outcomes.outputs.any_success}}
       - name: failure
         run: false
-        if: steps.outcomes.outputs.any_success == true
+        if: steps.outcomes.outputs.any_success == "true"
