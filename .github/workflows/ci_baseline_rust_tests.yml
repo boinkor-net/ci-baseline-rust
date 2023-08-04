@@ -10,9 +10,20 @@ on:
         description: "Arguments to pass to `cargo test` in the test step"
         type: string
 
+      # Used for testing this repo:
+      _internal_continue_on_error:
+        description: "Whether to set continue-on-error on the job"
+        type: boolean
+
+    outputs:
+      _internal_test_result:
+        description: "Result of the test job"
+        value: ${{ jobs.test.result }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: ${{inputs._internal_continue_on_error}}
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
