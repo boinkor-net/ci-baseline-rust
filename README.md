@@ -44,3 +44,15 @@ jobs:
   rust_lints:
     uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_lints.yml@main"
 ```
+
+## `ci_baseline_rust_coverage.yml` - Test coverage
+
+This workflow runs tests (unit, integration and doctests) and gathers all their coverage information and uploads it to https://codecov.io. Since gathering doctest coverage requires nightly, this is nightly-only at the moment.
+
+It requires secrets:
+
+* `codecov_token` - the token issued by codecov.io for your repo
+
+And comes with customization options:
+
+* `cargo_test_args` - any additional args to pass to cargo (e.g., for feature selection).
