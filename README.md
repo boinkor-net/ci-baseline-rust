@@ -1,4 +1,4 @@
-# Reusable baseline CI workflows for Rust
+# Reusable baseline CI workflows for Rust [![CI](https://github.com/boinkor-net/ci-baseline-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/boinkor-net/ci-baseline-rust/actions/workflows/ci.yml)
 
 The workflows in this repo all help drive the CI in this organization's Rust repos. There are a few workflows defined here that are [reusable](https://docs.github.com/en/actions/using-workflows/reusing-workflows) in github actions.
 
