@@ -10,9 +10,22 @@ on:
         description: "Arguments to pass to `cargo test` in the test step"
         type: string
 
+      # Used for testing this repo:
+      _internal_continue_on_error:
+        description: "Whether to set continue-on-error on the job; set this to true only in the tests _inside this repo_. Otherwise your workflow run will pass when it shouldn't."
+        type: boolean
+
+    outputs:
+      _internal_test_result:
+        description: "Result of the test job"
+        value: ${{ jobs.test.outputs.result }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    continue-on-error: ${{inputs._internal_continue_on_error}}
+    outputs:
+      result: ${{steps.test.outcome}}
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@master
@@ -22,3 +35,4 @@ jobs:
         with:
           tool: cargo-nextest
       - run: "cargo +${{inputs.rust_toolchain}} nextest run ${{inputs.cargo_test_args}}"
+        id: test

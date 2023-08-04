@@ -1,0 +1,44 @@
+name: "Tests for this repo"
+on:
+  workflow_call:
+
+jobs:
+  success_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
+    with:
+      cargo_test_args: "--manifest-path tests/success/Cargo.toml"
+      rust_toolchain: ${{ matrix.rust_toolchain }}
+
+  failure_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
+    with:
+      cargo_test_args: "--manifest-path tests/failure/Cargo.toml"
+      rust_toolchain: ${{ matrix.rust_toolchain }}
+      _internal_continue_on_error: true
+
+  all_failure_tests:
+    runs-on: ubuntu-latest
+    needs:
+      - failure_tests
+    steps:
+      - name: transform the outcomes
+        id: outcomes
+        env:
+          NEEDS_JSON: ${{toJSON(needs)}}
+        run: >
+          echo "any_success=$(echo "$NEEDS_JSON" | jq '. | to_entries | map(.value.outputs._internal_test_result) | contains(["success"])')" >>$GITHUB_OUTPUT
+      - name: debug
+        env:
+          OUTCOMES: ${{toJSON(steps.outcomes)}}
+        run: echo $OUTCOMES
+      - name: failure
+        run: exit 1
+        if: steps.outcomes.outputs.any_success == 'true'
