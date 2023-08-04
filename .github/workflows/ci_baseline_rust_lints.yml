@@ -1,0 +1,49 @@
+name: "CI/Rust - lints"
+on:
+  workflow_call:
+    inputs:
+      rust_toolchain:
+        description: "Rust toolchain to use"
+        type: string
+        default: stable
+      cargo_clippy_args:
+        description: "Arguments to pass to `cargo clippy`"
+        type: string
+        default: "-- -D warnings"
+
+jobs:
+  cargo_fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@${{inputs.rust_toolchain}}
+      - name: "cargo fmt"
+        run: "cargo fmt -v -- --check"
+
+  cargo_clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@${{inputs.rust_toolchain}}
+        with:
+          components: clippy
+      - uses: giraffate/clippy-action@v1
+        with:
+          reporter: "github-pr-review"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          clippy_flags: ${{inputs.cargo_clippy_args}}
+
+  cargo_deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check deny.toml
+        id: configured
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "deny.toml"
+      - name: "cargo deny"
+        if: steps.configured.outputs.files_exists == 'true'
+        uses: EmbarkStudios/cargo-deny-action@v1
+        with:
+          command: "check all"
