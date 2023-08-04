@@ -2,11 +2,16 @@
 
 The workflows in this repo all help drive the CI in this organization's Rust repos. There are a few workflows defined here that are [reusable](https://docs.github.com/en/actions/using-workflows/reusing-workflows) in github actions.
 
+All these workflows take common arguments:
+
+* `manifest_dir` - the directory containing Cargo.toml for the codebase under test.
+* `rust_toolchain` - the name of the rust toolchain you'd use in `cargo +toolchain_name test`; defaults to `"stable"`. (The only workflow that doesn't accept this input is `ci_baseline_rust_coverage.yml`, due to unstable cli options for testing doctests. It's set to `"nightly"`.)
+
+
 ## `ci_baseline_rust_tests.yml` - Matrix-able tests
 
 This workflow runs `cargo nextest run` with customizable settings:
 
-* `rust_toolchain` - the name of the rust toolchain you'd use in `cargo +toolchain_name test`; defaults to `"stable"`
 * `cargo_test_args` - additional arguments passed to `cargo test`, e.g. for feature selection.
 
 Example github workflow job:
