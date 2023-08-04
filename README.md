@@ -1,6 +1,6 @@
 # Reusable baseline CI workflows for Rust
 
-The workflows in this repo all help drive the CI in this organization's Rust repos. There are two workflows defined that are reusable:
+The workflows in this repo all help drive the CI in this organization's Rust repos. There are a few workflows defined here that are [reusable](https://docs.github.com/en/actions/using-workflows/reusing-workflows) in github actions.
 
 ## `ci_baseline_rust_tests.yml` - Matrix-able tests
 
@@ -45,7 +45,7 @@ jobs:
     uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_lints.yml@main"
 ```
 
-## `ci_baseline_rust_coverage.yml` - Test coverage
+## `ci_baseline_rust_coverage.yml` - Test coverage on codecov.io
 
 This workflow runs tests (unit, integration and doctests) and gathers all their coverage information and uploads it to https://codecov.io. Since gathering doctest coverage requires nightly, this is nightly-only at the moment.
 
@@ -56,3 +56,13 @@ It requires secrets:
 And comes with customization options:
 
 * `cargo_test_args` - any additional args to pass to cargo (e.g., for feature selection).
+
+Example job:
+
+```yml
+jobs:
+  code_coverage:
+    uses: boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_coverage.yml@main
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+```
