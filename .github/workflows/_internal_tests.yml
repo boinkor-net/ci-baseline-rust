@@ -17,13 +17,13 @@ jobs:
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
   failure_tests:
-    strategy:
-      matrix:
-        rust_toolchain: ["stable", "nightly"]
+    # strategy:
+    #   matrix:
+    #     rust_toolchain: ["stable", "nightly"]
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
     with:
       cargo_test_args: "--manifest-path tests/failure/Cargo.toml"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
+      rust_toolchain: stable # ${{ matrix.rust_toolchain }}
       _internal_continue_on_error: true
 
   all_failure_tests:
