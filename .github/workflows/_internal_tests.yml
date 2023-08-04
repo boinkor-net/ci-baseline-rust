@@ -17,12 +17,6 @@ jobs:
       cargo_test_args: "--manifest-path tests/success/Cargo.toml"
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
-  negative_success_tests:
-    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
-    with:
-      cargo_test_args: "--manifest-path tests/failure/Cargo.toml"
-      rust_toolchain: stable
-
   failure_tests:
     strategy:
       fail-fast: false
