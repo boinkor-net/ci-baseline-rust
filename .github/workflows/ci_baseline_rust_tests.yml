@@ -24,9 +24,6 @@ on:
         description: "Result of the test job"
         value: ${{ jobs.test.outputs.result }}
 
-env:
-  CARGO_MANIFEST_DIR: ${{inputs.manifest_dir}}
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -43,3 +40,4 @@ jobs:
           tool: cargo-nextest
       - run: "cargo +${{inputs.rust_toolchain}} nextest run ${{inputs.cargo_test_args}}"
         id: test
+        working-directory: ${{inputs.manifest_dir}}
