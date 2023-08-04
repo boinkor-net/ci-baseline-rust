@@ -22,7 +22,7 @@
         "NEEDS_JSON": "${{toJSON(needs)}}"
       "name": "Transform outcomes"
       "run": |
-        echo "ALL_SUCCESS=$(echo "$NEEDS_JSON" | jq '. | to_entries | map(.value.outputs._internal_test_result == "success") | all')" >>$GITHUB_ENV
+        echo "ALL_SUCCESS=$(echo "$NEEDS_JSON" | jq '. | to_entries | map(.value.result == "success") | all')" >>$GITHUB_ENV
     - "name": "check"
       "run": "[ $ALL_SUCCESS == true ]"
 "name": "CI"
