@@ -48,7 +48,8 @@ jobs:
           toolchain: ${{inputs.rust_toolchain}}
       - name: "cargo fmt"
         id: fmt
-        run: "cargo fmt --manifest-path $CARGO_MANIFEST_DIR/Cargo.toml -v -- --check"
+        run: "cargo fmt -v -- -v --check"
+        working-directory: ${{inputs.manifest_dir}}
 
   cargo_clippy:
     runs-on: ubuntu-latest
