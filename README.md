@@ -19,7 +19,7 @@ Example github workflow job:
 ```yml
 jobs:
   rust_tests:
-    uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_tests.yml@main"
+    uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_tests.yml@v1.0.0"
     strategy:
       matrix:
         rust_toolchain: [nightly, stable]
@@ -47,7 +47,7 @@ Example job:
 ```yml
 jobs:
   rust_lints:
-    uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_lints.yml@main"
+    uses: "boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_lints.yml@v1.0.0"
 ```
 
 ## `ci_baseline_rust_coverage.yml` - Test coverage on codecov.io
@@ -67,7 +67,7 @@ Example job:
 ```yml
 jobs:
   code_coverage:
-    uses: boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_coverage.yml@main
+    uses: boinkor-net/ci-baseline-rust/.github/workflows/ci_baseline_rust_coverage.yml@v1.0.0
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
