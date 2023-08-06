@@ -39,15 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Start ${{matrix.lint}} run
-        uses: aurelien-baudet/workflow-dispatch@v2
-        id: workflow_start
+        uses: ./.github/workflows/_internal_expected_lint_failure.yml"
         with:
-          workflow: _internal_expected_lint_failure.yml
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
-          inputs: '{"expected_failure": "${{matrix.lint}}", "manifest_dir": "tests/${{matrix.lint}}-failure"}'
-          token: ${{github.token}}
-          wait-for-completion-interval: 20s
-          workflow-logs: print
+          expected_failure: ${{matrix.lint}}
+          manifest_dir: "tests/${{matrix.lint}}-failure"
 
   failing_tests:
     permissions:
@@ -62,12 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Start ${{matrix.rust_toolchain}} test run
-        uses: aurelien-baudet/workflow-dispatch@v2
-        id: workflow_start
+        uses: ./.github/workflows/_internal_expected_test_failure.yml"
         with:
-          workflow: _internal_expected_test_failure.yml
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
-          inputs: '{"manifest_dir": "tests/failure", "rust_toolchain": "${{matrix.rust_toolchain}}"}'
-          token: ${{github.token}}
-          wait-for-completion-interval: 20s
-          workflow-logs: print
+          manifest_dir: tests/failure
+          rust_toolchain: ${{matrix.rust_toolchain}}

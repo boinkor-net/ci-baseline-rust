@@ -1,15 +1,11 @@
 name: Internal job invocation that expects a lint failure result
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       expected_failure:
         description: Test that should fail
         required: true
-        type: choice
-        options:
-          - clippy
-          - fmt
-          - deny
+        type: string
       manifest_dir:
         description: Directory containing the Cargo.toml manifest
         required: false

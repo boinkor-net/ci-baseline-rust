@@ -1,6 +1,6 @@
 name: Internal job invocation that expects a test failure result
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       manifest_dir:
         description: Directory containing the Cargo.toml manifest
