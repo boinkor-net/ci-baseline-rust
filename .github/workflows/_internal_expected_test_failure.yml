@@ -1,0 +1,26 @@
+name: Internal job invocation that expects a test failure result
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_dir:
+        description: Directory containing the Cargo.toml manifest
+        required: false
+        type: string
+        default: .
+      rust_toolchain:
+        description: Version of the rust toolchain to run against
+        required: false
+        type: string
+        default: stable
+      cargo_test_args:
+        description: "Arguments to pass to `cargo test` in the test step"
+        required: false
+        type: string
+
+jobs:
+  lints:
+    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
+    with:
+      manifest_dir: ${{github.event.client_payload.manifest_dir}}
+      rust_toolchain: ${{github.event.client_payload.rust_toolchain}}
+      cargo_clippy_args: ${{github.event.client_payload.cargo_test_args}}

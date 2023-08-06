@@ -1,0 +1,25 @@
+name: Internal job invocation that expects a lint failure result
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_dir:
+        description: Directory containing the Cargo.toml manifest
+        required: false
+        type: string
+        default: .
+      rust_toolchain:
+        description: Version of the rust toolchain to run against
+        required: false
+        type: string
+        default: stable
+      cargo_clippy_args:
+        description: "Arguments to pass to `cargo clippy` in the test step"
+        type: string
+
+jobs:
+  lints:
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    with:
+      manifest_dir: ${{github.event.client_payload.manifest_dir}}
+      rust_toolchain: ${{github.event.client_payload.rust_toolchain}}
+      cargo_clippy_args: ${{github.event.client_payload.cargo_clippy_args}}
