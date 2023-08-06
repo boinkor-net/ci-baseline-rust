@@ -67,7 +67,7 @@ jobs:
         with:
           components: clippy
           toolchain: ${{inputs.rust_toolchain}}
-      - uses: r7kamura/rust-problem-matchers@v1
+      - uses: antifuchs/rust-problem-matchers@clippy-regex
       - run: cargo +${{inputs.rust_toolchain}} clippy ${{inputs.cargo_clippy_args}}
         working-directory: ${{inputs.manifest_dir}}
 
