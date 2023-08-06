@@ -26,26 +26,26 @@ jobs:
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
   # Test jobs that expect failure:
-  failing_lints:
-    strategy:
-      fail-fast: false
-      matrix:
-        lint:
-          - clippy
-          - fmt
+  lint_failure_clippy:
     uses: "./.github/workflows/_internal_expected_lint_failure.yml"
     with:
-      expected_failure: ${{matrix.lint}}
-      manifest_dir: "tests/${{matrix.lint}}-failure"
+      expected_failure: clippy
+      manifest_dir: "tests/clippy-failure"
 
-  failing_tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        rust_toolchain:
-          - nightly
-          - stable
+  lint_failure_fmt:
+    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
+    with:
+      expected_failure: fmt
+      manifest_dir: "tests/fmt-failure"
+
+  test_failure_nightly:
     uses: "./.github/workflows/_internal_expected_test_failure.yml"
     with:
       manifest_dir: tests/failure
-      rust_toolchain: ${{matrix.rust_toolchain}}
+      rust_toolchain: nightly
+
+  test_failure_stable:
+    uses: "./.github/workflows/_internal_expected_test_failure.yml"
+    with:
+      manifest_dir: tests/failure
+      rust_toolchain: stable
