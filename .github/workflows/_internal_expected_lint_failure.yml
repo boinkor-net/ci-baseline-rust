@@ -30,6 +30,7 @@ jobs:
       _internal_continue_on_error: true
 
   expect_expected_failure:
+    name: "${{inputs.expected_failure}} failure"
     runs-on: ubuntu-latest
     needs: lints
     steps:
