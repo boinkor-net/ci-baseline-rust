@@ -23,3 +23,24 @@ jobs:
       manifest_dir: ${{inputs.manifest_dir}}
       rust_toolchain: ${{inputs.rust_toolchain}}
       cargo_clippy_args: ${{inputs.cargo_clippy_args}}
+      _internal_continue_on_error: true
+
+  expect_failure:
+    runs-on: ubuntu-latest
+    needs: lints
+    steps:
+      - name: transform the outcomes
+        id: outcomes
+        env:
+          NEEDS_JSON: ${{toJSON(needs)}}
+          JQ_PROGRAM: >
+            .
+            | to_entries
+            | map({value: .value, key: (.key | sub("^failure_"; ""))})
+            | map(.value.outputs["_internal_" + .key + "_result"] == "failure")
+            | all
+        run: >
+          echo "all_failure=$(echo "$NEEDS_JSON" | jq "$JQ_PROGRAM")" | tee -a $GITHUB_OUTPUT
+      - name: expect failure
+        run: exit 1
+        if: steps.outcomes.outputs.all_failure != 'true'
