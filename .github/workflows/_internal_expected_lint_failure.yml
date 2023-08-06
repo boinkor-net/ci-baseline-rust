@@ -16,9 +16,6 @@ on:
         required: false
         type: string
         default: stable
-      cargo_clippy_args:
-        description: "Arguments to pass to `cargo clippy` in the test step"
-        type: string
 
 jobs:
   lints:
@@ -26,7 +23,6 @@ jobs:
     with:
       manifest_dir: ${{inputs.manifest_dir}}
       rust_toolchain: ${{inputs.rust_toolchain}}
-      cargo_clippy_args: ${{inputs.cargo_clippy_args}}
       _internal_continue_on_error: true
 
   expect_expected_failure:
