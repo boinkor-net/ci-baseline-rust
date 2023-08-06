@@ -36,6 +36,7 @@ env:
 
 jobs:
   cargo_fmt:
+    name: cargo fmt ${{inputs.manifest_dir}}
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
     env:
@@ -55,6 +56,7 @@ jobs:
         working-directory: ${{inputs.manifest_dir}}
 
   cargo_clippy:
+    name: cargo clippy ${{inputs.manifest_dir}}
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
     env:
@@ -72,6 +74,7 @@ jobs:
         working-directory: ${{inputs.manifest_dir}}
 
   cargo_deny:
+    name: cargo deny ${{inputs.manifest_dir}}
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
     outputs:
