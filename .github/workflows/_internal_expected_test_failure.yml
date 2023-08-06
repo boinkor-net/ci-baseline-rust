@@ -1,3 +1,9 @@
+# This workflow calls the reusable test workflow and ensures that the
+# tests do not pass.
+#
+# Please don't use this as a reusable workflow, because it is very
+# much not.
+
 name: Internal job invocation that expects a test failure result
 on:
   workflow_call:

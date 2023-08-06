@@ -2,9 +2,9 @@
 # readable, but please don't edit it.
 
 "jobs":
-  "_internal_tests":
+  "e2e":
     "secrets": "inherit"
-    "uses": "./.github/workflows/_internal_tests.yml"
+    "uses": "./.github/workflows/e2e.yml"
   "any_ci":
     "runs-on": "ubuntu-latest"
     "steps":
@@ -16,7 +16,7 @@
   "overall_ci":
     "if": "always()"
     "needs":
-    - "_internal_tests"
+    - "e2e"
     - "ci_rust"
     "permissions":
       "actions": "read"

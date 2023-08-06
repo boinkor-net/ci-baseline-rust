@@ -26,6 +26,7 @@ on:
 
 jobs:
   tests:
+    name: cargo +${{inputs.rust_toolchain}} test ${{inputs.cargo_test_args}}
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
     env:
