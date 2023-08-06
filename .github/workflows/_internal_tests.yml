@@ -43,4 +43,5 @@ jobs:
         id: workflow_start
         with:
           workflow: _internal_expected_lint_failure.yml
+          ref: ${{ github.event.pull_request.head.ref }}
           inputs: '{"expected_failure": "${{matrix.lint}}", "manifest_dir": "tests/${{matrix.lint}}-failure"}'
