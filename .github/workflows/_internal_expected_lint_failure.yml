@@ -2,6 +2,14 @@ name: Internal job invocation that expects a lint failure result
 on:
   workflow_dispatch:
     inputs:
+      expected_failure:
+        description: Test that should fail
+        required: true
+        type: choice
+        options:
+          - clippy
+          - fmt
+          - deny
       manifest_dir:
         description: Directory containing the Cargo.toml manifest
         required: false
@@ -33,14 +41,20 @@ jobs:
         id: outcomes
         env:
           NEEDS_JSON: ${{toJSON(needs)}}
-          JQ_PROGRAM: >
-            .
+          JQ_FAIL_PROGRAM: >
+            .lints.outputs["_internal_${{inputs.expected_failure}}_result"] == "failure"
+          JQ_SUCCESS_PROGRAM: >
+            .lints.outputs
             | to_entries
-            | map({value: .value, key: (.key | sub("^failure_"; ""))})
-            | map(.value.outputs["_internal_" + .key + "_result"] == "failure")
+            | map(select(.key != "_internal_${{inputs.expected_failure}}_result"))
+            | map(.value == "success")
             | all
         run: >
-          echo "all_failure=$(echo "$NEEDS_JSON" | jq "$JQ_PROGRAM")" | tee -a $GITHUB_OUTPUT
-      - name: expect failure
+          echo "did_fail=$(echo "$NEEDS_JSON" | jq -r "$JQ_FAIL_PROGRAM")" | tee -a $GITHUB_OUTPUT
+          echo "rest_success=$(echo "$NEEDS_JSON" | jq -r "$JQ_SUCCESS_PROGRAM")" | tee -a $GITHUB_OUTPUT
+      - name: expect failure in ${{inputs.expected_failure}}
         run: exit 1
-        if: steps.outcomes.outputs.all_failure != 'true'
+        if: steps.outcomes.outputs.did_fail != 'true'
+      - name: expect non-${{inputs.expected_failure}} tests to succeed
+        run: exit 1
+        if: steps.outcomes.outputs.rest_success != 'true'
