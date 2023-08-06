@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Start ${{matrix.lint}} run
-        uses: benc-uk/workflow-dispatch@v1
+        uses: aurelien-baudet/workflow-dispatch@v2
         id: workflow_start
         with:
           workflow: _internal_expected_lint_failure.yml
