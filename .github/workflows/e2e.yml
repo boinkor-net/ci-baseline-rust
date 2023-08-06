@@ -1,4 +1,10 @@
-name: "Tests for this repo"
+# This workflow contains end-to-end tests that ensure the workflows
+# defined here succeed and fail under the correct circumstances.
+#
+# Please don't use this as a reusable workflow, because it is very
+# much not.
+
+name: "End-to-end tests for this repo"
 on:
   workflow_call:
 

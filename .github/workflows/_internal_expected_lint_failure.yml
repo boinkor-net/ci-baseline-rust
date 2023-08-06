@@ -1,3 +1,10 @@
+# This workflow calls the reusable lint workflow and ensures that
+# exactly one (the expected) lint fails, and that the others either
+# succeed or get skipped.
+#
+# Please don't use this as a reusable workflow, because it is very
+# much not.
+
 name: Internal job invocation that expects a lint failure result
 on:
   workflow_call:
