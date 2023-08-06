@@ -47,3 +47,25 @@ jobs:
           inputs: '{"expected_failure": "${{matrix.lint}}", "manifest_dir": "tests/${{matrix.lint}}-failure"}'
           token: ${{github.token}}
           wait-for-completion-interval: 20s
+
+  failing_tests:
+    permissions:
+      actions: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain:
+          - nightly
+          - stable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start ${{matrix.rust_toolchain}} test run
+        uses: aurelien-baudet/workflow-dispatch@v2
+        id: workflow_start
+        with:
+          workflow: _internal_expected_test_failure.yml
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
+          inputs: '{"manifest_dir": "tests/failure", "rust_toolchain": "${{matrix.rust_toolchain}}"}'
+          token: ${{github.token}}
+          wait-for-completion-interval: 20s
