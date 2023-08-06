@@ -20,6 +20,6 @@ jobs:
   lints:
     uses: "./.github/workflows/ci_baseline_rust_lints.yml"
     with:
-      manifest_dir: ${{github.event.client_payload.manifest_dir}}
-      rust_toolchain: ${{github.event.client_payload.rust_toolchain}}
-      cargo_clippy_args: ${{github.event.client_payload.cargo_clippy_args}}
+      manifest_dir: ${{inputs.manifest_dir}}
+      rust_toolchain: ${{inputs.rust_toolchain}}
+      cargo_clippy_args: ${{inputs.cargo_clippy_args}}
