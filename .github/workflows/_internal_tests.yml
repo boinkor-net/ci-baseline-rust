@@ -25,51 +25,27 @@ jobs:
       manifest_dir: "tests/success"
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
-  # Test jobs that expect failure; note that these need to be named
-  # exactly after the _internal_<test job>_result output.
-  failure_tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        rust_toolchain: ["stable", "nightly"]
-    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
-    secrets: inherit
+  # Test jobs that expect failure:
+  lint_failure_clippy:
+    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
     with:
-      manifest_dir: "tests/failure"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
-      _internal_continue_on_error: true
+      expected_failure: clippy
+      manifest_dir: "tests/clippy-failure"
 
-  failure_fmt:
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
+  lint_failure_fmt:
+    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
     with:
+      expected_failure: fmt
       manifest_dir: "tests/fmt-failure"
-      _internal_continue_on_error: true
 
-  failure_clippy:
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
+  test_failure_nightly:
+    uses: "./.github/workflows/_internal_expected_test_failure.yml"
     with:
-      manifest_dir: "tests/lint-failure"
-      _internal_continue_on_error: true
+      manifest_dir: tests/failure
+      rust_toolchain: nightly
 
-  all_failure_tests:
-    runs-on: ubuntu-latest
-    needs:
-      - failure_tests
-      - failure_fmt
-      - failure_clippy
-    steps:
-      - name: transform the outcomes
-        id: outcomes
-        env:
-          NEEDS_JSON: ${{toJSON(needs)}}
-        run: >
-          echo "all_failure=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
-      - name: debug
-        env:
-          OUTCOMES: ${{toJSON(steps.outcomes)}}
-        run: echo $OUTCOMES
-      - name: failure
-        run: exit 1
-        if: steps.outcomes.outputs.all_failure != 'true'
+  test_failure_stable:
+    uses: "./.github/workflows/_internal_expected_test_failure.yml"
+    with:
+      manifest_dir: tests/failure
+      rust_toolchain: stable
