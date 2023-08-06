@@ -33,13 +33,10 @@ jobs:
         lint:
           - clippy
           - fmt
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start ${{matrix.lint}} run
-        uses: ./.github/workflows/_internal_expected_lint_failure.yml"
-        with:
-          expected_failure: ${{matrix.lint}}
-          manifest_dir: "tests/${{matrix.lint}}-failure"
+    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
+    with:
+      expected_failure: ${{matrix.lint}}
+      manifest_dir: "tests/${{matrix.lint}}-failure"
 
   failing_tests:
     strategy:
@@ -48,10 +45,7 @@ jobs:
         rust_toolchain:
           - nightly
           - stable
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start ${{matrix.rust_toolchain}} test run
-        uses: ./.github/workflows/_internal_expected_test_failure.yml"
-        with:
-          manifest_dir: tests/failure
-          rust_toolchain: ${{matrix.rust_toolchain}}
+    uses: "./.github/workflows/_internal_expected_test_failure.yml"
+    with:
+      manifest_dir: tests/failure
+      rust_toolchain: ${{matrix.rust_toolchain}}
