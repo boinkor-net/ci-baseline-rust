@@ -46,3 +46,4 @@ jobs:
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
           inputs: '{"expected_failure": "${{matrix.lint}}", "manifest_dir": "tests/${{matrix.lint}}-failure"}'
           token: ${{github.token}}
+          wait-for-completion-interval: 20s
