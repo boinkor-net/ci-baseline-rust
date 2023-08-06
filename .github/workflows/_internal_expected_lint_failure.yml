@@ -60,7 +60,7 @@ jobs:
             .lints.outputs
             | to_entries
             | map(select(.key != "_internal_${{inputs.expected_failure}}_result"))
-            | map(.value == "success")
+            | map(.value == "success" || .value == "skipped")
             | all
         run: >
           echo "did_succeed=$(echo "$NEEDS_JSON" | jq -r "$JQ_SUCCESS_PROGRAM")" | tee -a $GITHUB_OUTPUT
