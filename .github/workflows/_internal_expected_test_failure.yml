@@ -27,14 +27,14 @@ jobs:
 
   expect_test_failure:
     runs-on: ubuntu-latest
-    needs: lints
+    needs: tests
     steps:
       - name: transform expected failure
         id: expected_failure
         env:
           NEEDS_JSON: ${{toJSON(needs)}}
           JQ_FAIL_PROGRAM: >
-            .lints.outputs["_internal_tests_result"] == "failure"
+            .tests.outputs["_internal_tests_result"] == "failure"
         run: >
           echo "did_fail=$(echo "$NEEDS_JSON" | jq -r "$JQ_FAIL_PROGRAM")" | tee -a $GITHUB_OUTPUT
       - name: expect failure
