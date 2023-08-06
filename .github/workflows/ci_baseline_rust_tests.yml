@@ -22,10 +22,10 @@ on:
     outputs:
       _internal_tests_result:
         description: "Result of the test job"
-        value: ${{ jobs.test.outputs.result }}
+        value: ${{ jobs.tests.outputs.result }}
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
     outputs:
