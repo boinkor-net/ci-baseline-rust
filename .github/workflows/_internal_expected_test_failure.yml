@@ -24,6 +24,7 @@ jobs:
       manifest_dir: ${{inputs.manifest_dir}}
       rust_toolchain: ${{inputs.rust_toolchain}}
       cargo_test_args: ${{inputs.cargo_test_args}}
+      _internal_continue_on_error: true
 
   expect_test_failure:
     runs-on: ubuntu-latest
