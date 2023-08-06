@@ -18,26 +18,9 @@ on:
         type: string
 
 jobs:
-  tests:
+  lints:
     uses: "./.github/workflows/ci_baseline_rust_tests.yml"
     with:
-      manifest_dir: ${{inputs.manifest_dir}}
-      rust_toolchain: ${{inputs.rust_toolchain}}
-      cargo_test_args: ${{inputs.cargo_test_args}}
-      _internal_continue_on_error: true
-
-  expect_test_failure:
-    runs-on: ubuntu-latest
-    needs: tests
-    steps:
-      - name: transform expected failure
-        id: expected_failure
-        env:
-          NEEDS_JSON: ${{toJSON(needs)}}
-          JQ_FAIL_PROGRAM: >
-            .tests.outputs["_internal_tests_result"] == "failure"
-        run: >
-          echo "did_fail=$(echo "$NEEDS_JSON" | jq -r "$JQ_FAIL_PROGRAM")" | tee -a $GITHUB_OUTPUT
-      - name: expect failure
-        run: exit 1
-        if: steps.expected_failure.outputs.did_fail != 'true'
+      manifest_dir: ${{github.event.client_payload.manifest_dir}}
+      rust_toolchain: ${{github.event.client_payload.rust_toolchain}}
+      cargo_clippy_args: ${{github.event.client_payload.cargo_test_args}}

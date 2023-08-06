@@ -25,49 +25,51 @@ jobs:
       manifest_dir: "tests/success"
       rust_toolchain: ${{ matrix.rust_toolchain }}
 
-  # Test jobs that expect failure:
-  failing_lints:
-    permissions:
-      actions: write
-      contents: read
+  # Test jobs that expect failure; note that these need to be named
+  # exactly after the _internal_<test job>_result output.
+  failure_tests:
     strategy:
       fail-fast: false
       matrix:
-        lint:
-          - clippy
-          - fmt
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start ${{matrix.lint}} run
-        uses: aurelien-baudet/workflow-dispatch@v2
-        id: workflow_start
-        with:
-          workflow: _internal_expected_lint_failure.yml
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
-          inputs: '{"expected_failure": "${{matrix.lint}}", "manifest_dir": "tests/${{matrix.lint}}-failure"}'
-          token: ${{github.token}}
-          wait-for-completion-interval: 20s
-          workflow-logs: print
+        rust_toolchain: ["stable", "nightly"]
+    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
+    secrets: inherit
+    with:
+      manifest_dir: "tests/failure"
+      rust_toolchain: ${{ matrix.rust_toolchain }}
+      _internal_continue_on_error: true
 
-  failing_tests:
-    permissions:
-      actions: write
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        rust_toolchain:
-          - nightly
-          - stable
+  failure_fmt:
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    secrets: inherit
+    with:
+      manifest_dir: "tests/fmt-failure"
+      _internal_continue_on_error: true
+
+  failure_clippy:
+    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
+    secrets: inherit
+    with:
+      manifest_dir: "tests/lint-failure"
+      _internal_continue_on_error: true
+
+  all_failure_tests:
     runs-on: ubuntu-latest
+    needs:
+      - failure_tests
+      - failure_fmt
+      - failure_clippy
     steps:
-      - name: Start ${{matrix.rust_toolchain}} test run
-        uses: aurelien-baudet/workflow-dispatch@v2
-        id: workflow_start
-        with:
-          workflow: _internal_expected_test_failure.yml
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
-          inputs: '{"manifest_dir": "tests/failure", "rust_toolchain": "${{matrix.rust_toolchain}}"}'
-          token: ${{github.token}}
-          wait-for-completion-interval: 20s
-          workflow-logs: print
+      - name: transform the outcomes
+        id: outcomes
+        env:
+          NEEDS_JSON: ${{toJSON(needs)}}
+        run: >
+          echo "all_failure=$(echo "$NEEDS_JSON" | jq '. | to_entries | map({value: .value, key: (.key | sub("^failure_"; ""))}) | map(.value.outputs["_internal_" + .key + "_result"] == "failure") | all')" >>$GITHUB_OUTPUT
+      - name: debug
+        env:
+          OUTCOMES: ${{toJSON(steps.outcomes)}}
+        run: echo $OUTCOMES
+      - name: failure
+        run: exit 1
+        if: steps.outcomes.outputs.all_failure != 'true'
