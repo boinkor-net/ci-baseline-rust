@@ -38,6 +38,8 @@ jobs:
   cargo_fmt:
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
+    env:
+      CARGO_TERM_COLOR: "never"
     outputs:
       result: ${{steps.fmt.outcome}}
     steps:
@@ -46,6 +48,7 @@ jobs:
         with:
           components: rustfmt
           toolchain: ${{inputs.rust_toolchain}}
+      - uses: r7kamura/rust-problem-matchers@v1
       - name: "cargo fmt"
         id: fmt
         run: "cargo fmt -v -- -v --check"
@@ -54,6 +57,8 @@ jobs:
   cargo_clippy:
     runs-on: ubuntu-latest
     continue-on-error: ${{inputs._internal_continue_on_error}}
+    env:
+      CARGO_TERM_COLOR: "never"
     outputs:
       result: ${{steps.clippy.outcome}}
     steps:
@@ -62,14 +67,8 @@ jobs:
         with:
           components: clippy
           toolchain: ${{inputs.rust_toolchain}}
-      - uses: giraffate/clippy-action@v1
-        id: clippy
-        with:
-          workdir: ${{inputs.manifest_dir}}
-          reporter: "github-check"
-          filter_mode: nofilter
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          clippy_flags: ${{inputs.cargo_clippy_args}}
+      - uses: r7kamura/rust-problem-matchers@v1
+      - run: cargo +${{inputs.rust_toolchain}} clippy ${{inputs.cargo_clippy_args}}
 
   cargo_deny:
     runs-on: ubuntu-latest
