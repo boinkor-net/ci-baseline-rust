@@ -27,9 +27,6 @@ jobs:
 
   # Test jobs that expect failure:
   failing_lints:
-    permissions:
-      actions: write
-      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -45,9 +42,6 @@ jobs:
           manifest_dir: "tests/${{matrix.lint}}-failure"
 
   failing_tests:
-    permissions:
-      actions: write
-      contents: read
     strategy:
       fail-fast: false
       matrix:
