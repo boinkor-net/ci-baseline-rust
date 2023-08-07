@@ -36,7 +36,6 @@ jobs:
     secrets: inherit
     with:
       manifest_dir: "tests/success"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
       apt_install_packages: zfs-linux
 
   success_lints_c_dep:
@@ -44,7 +43,6 @@ jobs:
     secrets: inherit
     with:
       manifest_dir: "tests/success"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
       apt_install_packages: zfs-linux
 
   # Test jobs that expect failure:
