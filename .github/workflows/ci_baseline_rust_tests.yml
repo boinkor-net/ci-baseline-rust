@@ -10,6 +10,10 @@ on:
         description: "Rust toolchain to use for testing"
         type: string
         default: "stable"
+      apt_install_packages:
+        description: "Packages, if any, to be installed via apt on ubuntu-latest. Skipped if set to the empty string."
+        type: string
+        default: ""
       cargo_test_args:
         description: "Arguments to pass to `cargo test` in the test step"
         type: string
@@ -38,6 +42,11 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{inputs.rust_toolchain}}
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        if: inputs.apt_install_packages != ''
+        with:
+          packages: ${{inputs.apt_install_packages}}
+          version: 1.0
       - uses: r7kamura/rust-problem-matchers@v1
       - uses: taiki-e/install-action@v2
         with:
