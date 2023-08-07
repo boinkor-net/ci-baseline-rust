@@ -10,6 +10,10 @@ on:
         description: "Rust toolchain to use"
         type: string
         default: stable
+      apt_install_packages:
+        description: "Packages, if any, to be installed via apt on ubuntu-latest prior to running clippy. Skipped if set to the empty string."
+        type: string
+        default: ""
       cargo_clippy_args:
         description: "Arguments to pass to `cargo clippy`"
         type: string
@@ -69,6 +73,11 @@ jobs:
         with:
           components: clippy
           toolchain: ${{inputs.rust_toolchain}}
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        if: inputs.apt_install_packages != ""
+        with:
+          packages: ${{inputs.apt_install_packages}}
+          version: 1.0
       - uses: antifuchs/rust-problem-matchers@clippy-regex
       - run: cargo +${{inputs.rust_toolchain}} clippy ${{inputs.cargo_clippy_args}}
         id: clippy
