@@ -43,7 +43,7 @@ jobs:
         with:
           toolchain: ${{inputs.rust_toolchain}}
       - uses: awalsh128/cache-apt-pkgs-action@v1
-        if: inputs.apt_install_packages != ""
+        if: inputs.apt_install_packages != ''
         with:
           packages: ${{inputs.apt_install_packages}}
           version: 1.0
