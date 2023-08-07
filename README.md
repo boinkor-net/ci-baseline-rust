@@ -6,6 +6,7 @@ All these workflows take common arguments:
 
 * `manifest_dir` - the directory containing Cargo.toml for the codebase under test.
 * `rust_toolchain` - the name of the rust toolchain you'd use in `cargo +toolchain_name test`; defaults to `"stable"`. (The only workflow that doesn't accept this input is `ci_baseline_rust_coverage.yml`, due to unstable cli options for testing doctests. It's set to `"nightly"`.)
+* `apt_install_packages` - `ubuntu-latest` packages to install before running any cargo builds. These are cached and should restore quickly, but can't depend on pre/postinstall scripts.
 
 
 ## `ci_baseline_rust_tests.yml` - Matrix-able tests
