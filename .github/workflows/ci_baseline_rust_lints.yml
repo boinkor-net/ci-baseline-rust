@@ -48,7 +48,7 @@ jobs:
     outputs:
       result: ${{steps.fmt.outcome}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
           components: rustfmt
@@ -68,7 +68,7 @@ jobs:
     outputs:
       result: ${{steps.clippy.outcome}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
           components: clippy
@@ -90,10 +90,10 @@ jobs:
     outputs:
       result: ${{steps.deny.outcome}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Check deny.toml
         id: configured
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "deny.toml"
       - name: "cargo deny"
