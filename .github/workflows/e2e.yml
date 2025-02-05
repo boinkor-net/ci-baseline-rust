@@ -48,16 +48,18 @@ jobs:
           manifest_dir: "tests/success"
           rust_toolchain: ${{ matrix.rust_toolchain }}
 
-  success_lints:
+  success_deny:
     strategy:
       fail-fast: false
       matrix:
         rust_toolchain: ["stable", "nightly"]
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/cargo_deny
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
 
   success_tests_c_dep:
     runs-on: ubuntu-latest
@@ -68,15 +70,22 @@ jobs:
           manifest_dir: "tests/success-with-c-dependency"
           apt_install_packages: libzfslinux-dev
 
-  success_lints_c_dep:
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success-with-c-dependency"
-      apt_install_packages: libzfslinux-dev
+  success_clippy_c_dep:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/clippy
+        with:
+          manifest_dir: "tests/success-with-c-dependency"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
+          apt_install_packages: libzfslinux-dev
 
   # Test jobs that expect failure:
-  failure_lint_clippy:
+  failure_clippy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,6 +107,21 @@ jobs:
       - uses: ./actions/fmt
         with:
           manifest_dir: "tests/fmt-failure"
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
+
+  failure_cargo_deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/cargo_deny
+        with:
+          manifest_dir: "tests/cargo-deny-failure"
         id: failure
         continue-on-error: true
       - name: Expect failure

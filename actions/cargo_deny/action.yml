@@ -1,0 +1,23 @@
+name: "boinkor.net CI/rust - cargo-deny"
+description: "Run `cargo deny check all` to validate licenses and security advisories"
+author: "Andreas Fuchs <asf@boinkor.net>"
+inputs:
+  manifest_dir:
+    description: "Directory containing the Cargo.toml of the codebase under test"
+    default: "."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check deny.toml
+      id: configured
+      uses: andstor/file-existence-action@v3
+      with:
+        files: "${{inputs.manifest_dir}}/deny.toml"
+    - name: "cargo deny"
+      id: deny
+      if: steps.configured.outputs.files_exists == 'true'
+      uses: EmbarkStudios/cargo-deny-action@v2
+      with:
+        command: "check all"
+        manifest-path: "${{inputs.manifest_dir}}/Cargo.toml"
