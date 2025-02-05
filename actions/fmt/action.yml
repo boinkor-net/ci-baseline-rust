@@ -1,0 +1,24 @@
+name: "boinkor.net CI/rust - fmt"
+description: "Run `cargo fmt` and check that all files are formatted"
+author: "Andreas Fuchs <asf@boinkor.net>"
+inputs:
+  manifest_dir:
+    description: "Directory containing the Cargo.toml of the codebase under test"
+    default: "."
+  rust_toolchain:
+    description: "Rust toolchain to use for testing"
+    default: "stable"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        components: rustfmt
+        toolchain: ${{inputs.rust_toolchain}}
+    - uses: r7kamura/rust-problem-matchers@v1
+    - name: "cargo fmt"
+      id: fmt
+      run: "cargo fmt -v -- -v --check"
+      shell: bash
+      working-directory: ${{inputs.manifest_dir}}

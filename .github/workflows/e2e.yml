@@ -14,58 +14,150 @@ jobs:
       fail-fast: false
       matrix:
         rust_toolchain: ["stable", "nightly"]
-    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/test
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
 
-  success_lints:
+  success_fmt:
     strategy:
       fail-fast: false
       matrix:
         rust_toolchain: ["stable", "nightly"]
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success"
-      rust_toolchain: ${{ matrix.rust_toolchain }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/fmt
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
+
+  success_clippy:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/clippy
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
+
+  success_deny:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/cargo_deny
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
 
   success_tests_c_dep:
-    uses: "./.github/workflows/ci_baseline_rust_tests.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success-with-c-dependency"
-      apt_install_packages: libzfslinux-dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/test
+        with:
+          manifest_dir: "tests/success-with-c-dependency"
+          apt_install_packages: libzfslinux-dev
 
-  success_lints_c_dep:
-    uses: "./.github/workflows/ci_baseline_rust_lints.yml"
-    secrets: inherit
-    with:
-      manifest_dir: "tests/success-with-c-dependency"
-      apt_install_packages: libzfslinux-dev
+  success_clippy_c_dep:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/clippy
+        with:
+          manifest_dir: "tests/success-with-c-dependency"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
+          apt_install_packages: libzfslinux-dev
 
   # Test jobs that expect failure:
-  lint_failure_clippy:
-    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
-    with:
-      expected_failure: clippy
-      manifest_dir: "tests/clippy-failure"
+  failure_clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/clippy
+        with:
+          manifest_dir: "tests/clippy-failure"
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
 
-  lint_failure_fmt:
-    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
-    with:
-      expected_failure: fmt
-      manifest_dir: "tests/fmt-failure"
+  failure_fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/fmt
+        with:
+          manifest_dir: "tests/fmt-failure"
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
 
-  test_failure_nightly:
-    uses: "./.github/workflows/_internal_expected_test_failure.yml"
-    with:
-      manifest_dir: tests/failure
-      rust_toolchain: nightly
+  failure_cargo_deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/cargo_deny
+        with:
+          manifest_dir: "tests/cargo-deny-failure"
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
 
-  test_failure_stable:
-    uses: "./.github/workflows/_internal_expected_test_failure.yml"
-    with:
-      manifest_dir: tests/failure
-      rust_toolchain: stable
+  failure_test_nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/test
+        with:
+          manifest_dir: tests/failure
+          rust_toolchain: nightly
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
+
+  failure_test_stable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/test
+        with:
+          manifest_dir: tests/failure
+          rust_toolchain: stable
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}

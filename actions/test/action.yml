@@ -1,0 +1,36 @@
+name: "boinkor.net CI/rust - test"
+description: "Run `cargo test`"
+author: "Andreas Fuchs <asf@boinkor.net>"
+inputs:
+  manifest_dir:
+    description: "Directory containing the Cargo.toml of the codebase under test"
+    default: "."
+  rust_toolchain:
+    description: "Rust toolchain to use for testing"
+    default: "stable"
+  apt_install_packages:
+    description: "Packages, if any, to be installed via apt on ubuntu-latest. Skipped if set to the empty string."
+    default: ""
+  cargo_test_args:
+    description: "Arguments to pass to `cargo test` in the test step"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{inputs.rust_toolchain}}
+    - uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      if: inputs.apt_install_packages != ''
+      with:
+        packages: ${{inputs.apt_install_packages}}
+        version: 1.0
+    - uses: r7kamura/rust-problem-matchers@v1
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-nextest
+    - run: "cargo +${{inputs.rust_toolchain}} nextest run ${{inputs.cargo_test_args}}"
+      shell: bash
+      id: test
+      working-directory: ${{inputs.manifest_dir}}
