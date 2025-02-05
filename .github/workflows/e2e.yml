@@ -22,6 +22,19 @@ jobs:
           manifest_dir: "tests/success"
           rust_toolchain: ${{ matrix.rust_toolchain }}
 
+  success_fmt:
+    strategy:
+      fail-fast: false
+      matrix:
+        rust_toolchain: ["stable", "nightly"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/fmt
+        with:
+          manifest_dir: "tests/success"
+          rust_toolchain: ${{ matrix.rust_toolchain }}
+
   success_lints:
     strategy:
       fail-fast: false
@@ -56,11 +69,21 @@ jobs:
       expected_failure: clippy
       manifest_dir: "tests/clippy-failure"
 
-  failure_lint_fmt:
-    uses: "./.github/workflows/_internal_expected_lint_failure.yml"
-    with:
-      expected_failure: fmt
-      manifest_dir: "tests/fmt-failure"
+  failure_fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/fmt
+        with:
+          expected_failure: fmt
+          manifest_dir: "tests/fmt-failure"
+        id: failure
+        continue-on-error: true
+      - name: Expect failure
+        run: |
+          echo "::setFailed::Expected the failure step to fail; instead: ${{steps.failure.outcome}}"
+          exit 1
+        if: ${{ success() && steps.failure.outcome != 'failure' }}
 
   failure_test_nightly:
     runs-on: ubuntu-latest

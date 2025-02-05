@@ -39,26 +39,6 @@ env:
   CARGO_MANIFEST_DIR: ${{inputs.manifest_dir}}
 
 jobs:
-  cargo_fmt:
-    name: cargo fmt ${{inputs.manifest_dir}}
-    runs-on: ubuntu-latest
-    continue-on-error: ${{inputs._internal_continue_on_error}}
-    env:
-      CARGO_TERM_COLOR: "never"
-    outputs:
-      result: ${{steps.fmt.outcome}}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          components: rustfmt
-          toolchain: ${{inputs.rust_toolchain}}
-      - uses: r7kamura/rust-problem-matchers@v1
-      - name: "cargo fmt"
-        id: fmt
-        run: "cargo fmt -v -- -v --check"
-        working-directory: ${{inputs.manifest_dir}}
-
   cargo_clippy:
     name: cargo clippy ${{inputs.manifest_dir}}
     runs-on: ubuntu-latest
