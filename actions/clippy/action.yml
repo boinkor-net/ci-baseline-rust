@@ -1,0 +1,34 @@
+name: "boinkor.net CI/rust - clippy"
+description: "Run `cargo clippy`"
+author: "Andreas Fuchs <asf@boinkor.net>"
+inputs:
+  manifest_dir:
+    description: "Directory containing the Cargo.toml of the codebase under test"
+    default: "."
+  rust_toolchain:
+    description: "Rust toolchain to use for testing"
+    default: "stable"
+  apt_install_packages:
+    description: "Packages, if any, to be installed via apt on ubuntu-latest. Skipped if set to the empty string."
+    default: ""
+  cargo_clippy_args:
+    description: "Arguments to pass to `cargo clippy`"
+    default: "-- -D warnings"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        components: clippy
+        toolchain: ${{inputs.rust_toolchain}}
+    - uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      if: inputs.apt_install_packages != ''
+      with:
+        packages: ${{inputs.apt_install_packages}}
+        version: 1.0
+    - uses: antifuchs/rust-problem-matchers@clippy-regex
+    - run: cargo +${{inputs.rust_toolchain}} clippy ${{inputs.cargo_clippy_args}}
+      shell: bash
+      id: clippy
+      working-directory: ${{inputs.manifest_dir}}

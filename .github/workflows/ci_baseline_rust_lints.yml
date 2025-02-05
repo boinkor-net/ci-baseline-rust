@@ -39,30 +39,6 @@ env:
   CARGO_MANIFEST_DIR: ${{inputs.manifest_dir}}
 
 jobs:
-  cargo_clippy:
-    name: cargo clippy ${{inputs.manifest_dir}}
-    runs-on: ubuntu-latest
-    continue-on-error: ${{inputs._internal_continue_on_error}}
-    env:
-      CARGO_TERM_COLOR: "never"
-    outputs:
-      result: ${{steps.clippy.outcome}}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          components: clippy
-          toolchain: ${{inputs.rust_toolchain}}
-      - uses: awalsh128/cache-apt-pkgs-action@v1.4.3
-        if: inputs.apt_install_packages != ''
-        with:
-          packages: ${{inputs.apt_install_packages}}
-          version: 1.0
-      - uses: antifuchs/rust-problem-matchers@clippy-regex
-      - run: cargo +${{inputs.rust_toolchain}} clippy ${{inputs.cargo_clippy_args}}
-        id: clippy
-        working-directory: ${{inputs.manifest_dir}}
-
   cargo_deny:
     name: cargo deny ${{inputs.manifest_dir}}
     runs-on: ubuntu-latest
